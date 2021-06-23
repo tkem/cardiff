@@ -17,17 +17,18 @@
 
 // use digital pin #2 as input - make sure it does not deliver more
 // than 5V or 3.3V, depending on platform!
-
-#if !defined(ARDUINO)
-PinName cuPin = D2;
-#elif defined(ARDUINO_ARCH_MBED)
+#if defined(ARDUINO_ARCH_MBED)
 PinName cuPin = p2;
 REDIRECT_STDOUT_TO(Serial);
 #elif defined(ARDUINO_ARCH_ESP8266)
 int cuPin = D2;
-#else
+#elif defined(ARDUINO)
 int cuPin = 2;
 #define printf(...) { char buf[80]; sprintf(buf, __VA_ARGS__); Serial.print(buf); }
+#elif defined(TARGET_NRF51_MICROBIT)
+PinName cuPin = P2;
+#else
+PinName cuPin = D2;
 #endif
 
 CarreraDigitalControlUnit cu(cuPin);

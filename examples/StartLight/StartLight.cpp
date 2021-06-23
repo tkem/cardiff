@@ -21,14 +21,28 @@
 
 // set digital pin #2 as input - make sure it does not deliver more
 // than 3.3V!
+#ifdef TARGET_NRF51_MICROBIT
+CarreraDigitalControlUnit cu(P2);
+#else
 CarreraDigitalControlUnit cu(D2);
+#endif
 
+#ifndef TARGET_NRF51_MICROBIT
 // set digital pins 3 to 7 as outputs (connected to LEDs)
 mbed::DigitalOut led1(D3);
 mbed::DigitalOut led2(D4);
 mbed::DigitalOut led3(D5);
 mbed::DigitalOut led4(D6);
 mbed::DigitalOut led5(D7);
+#else
+// for the BBC micro:bit use the on-board LED matric (FIXME)
+mbed::DigitalOut col0(P0_4, 0);
+mbed::DigitalOut led1(P0_13);
+mbed::DigitalOut led2(P0_13);
+mbed::DigitalOut led3(P0_15);
+mbed::DigitalOut led4(P0_13);
+mbed::DigitalOut led5(P0_13);
+#endif
 
 int main() {
     cu.start();

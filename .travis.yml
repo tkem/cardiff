@@ -18,4 +18,4 @@ install:
 
 script:
 - pio ci -v -l src -O framework=arduino -b uno -b pico -b nodemcuv2
-- pio ci -v -l src -O framework=mbed -b nucleo_f446re
+- pio ci -v -l src -O framework=mbed -b nucleo_f446re -b bbcmicrobit

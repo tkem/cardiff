@@ -292,10 +292,12 @@ void CU_IRQ_HANDLER CarreraDigitalControlUnit::rise()
 
 uint32_t CarreraDigitalControlUnit::time_us()
 {
-#ifdef __MBED__
+#ifndef __MBED__
+    return micros();
+#elif MBED_MAJOR_VERSION >= 6
     return _timer.elapsed_time().count();
 #else
-    return micros();
+    return _timer.read_us();
 #endif
 }
 
