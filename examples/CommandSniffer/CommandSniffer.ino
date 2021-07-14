@@ -42,13 +42,11 @@ void setup() {
 }
 
 void loop() {
-    uint8_t prog[3];
     int data = cu.read();
-    if (cu.parse_prog(data, prog)) {
-        // prog := { command, value, address }
-        const uint8_t command = prog[0];
-        const uint8_t value = prog[1];
-        const uint8_t address = prog[2];
+    if (CarreraProgrammingPacket prog = data) {
+        const unsigned command = prog.command();
+        const unsigned value = prog.value();
+        const unsigned address = prog.address();
 
         switch (command) {
         case 0:

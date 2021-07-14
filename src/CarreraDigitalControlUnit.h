@@ -201,4 +201,93 @@ private:
     unsigned _index;
 };
 
+class CarreraControllerPacket {
+public:
+
+    CarreraControllerPacket() : _data(0) {}
+
+    CarreraControllerPacket(int data);
+
+    uint8_t address() const { return (_data >> 6) & 0x07; }
+
+    bool laneChange() const { return (_data & 0x20) == 0; }
+
+    uint8_t throttle() const { return (_data >> 1) & 0x0f; }
+
+    bool fuelMode() const { return (_data & 0x01) != 0; }
+
+    operator bool() const { return _data != 0; }
+
+private:
+    uint16_t _data;
+};
+
+class CarreraPaceCarPacket {
+public:
+    CarreraPaceCarPacket() : _data(0) {}
+
+    CarreraPaceCarPacket(int data);
+
+    bool stopped() const { return (_data & 0x20) != 0; }
+
+    bool returnToPit() const { return (_data & 0x04) != 0; }
+
+    bool active() const { return (_data & 0x02) != 0; }
+
+    bool fuelMode() const { return (_data & 0x01) != 0; }
+
+    operator bool() const { return _data != 0; }
+
+private:
+    uint16_t _data;
+};
+
+class CarreraActivityPacket {
+public:
+    CarreraActivityPacket() : _data(0) {}
+
+    CarreraActivityPacket(int data);
+
+    uint8_t controllerMask() const { return (_data >> 1) & 0x3f; }
+
+    bool anyControllerActive() const { return (_data & 0x80) != 0; }
+
+    operator bool() const { return _data != 0; }
+
+private:
+    uint16_t _data;
+};
+
+class CarreraAcknowledgePacket {
+public:
+    CarreraAcknowledgePacket() : _data(0) {}
+
+    CarreraAcknowledgePacket(int data);
+
+    uint8_t slotMask() const { return _data & 0xff; }
+
+    operator bool() const { return _data != 0; }
+
+private:
+    uint16_t _data;
+};
+
+class CarreraProgrammingPacket {
+public:
+    CarreraProgrammingPacket() : _data(0) {}
+
+    CarreraProgrammingPacket(int data);
+
+    uint8_t value() const { return _data & 0x0f; }
+
+    uint8_t command() const { return (_data >> 4) & 0x1f; }
+
+    uint8_t address() const { return (_data >> 9) & 0x07; }
+
+    operator bool() const { return _data != 0; }
+
+private:
+    uint16_t _data;
+};
+
 #endif

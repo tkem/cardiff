@@ -37,16 +37,16 @@ void setup() {
 }
 
 void loop() {
-    uint8_t prog[3];
     int data = cu.read();
-    if (cu.parse_prog(data, prog)) {
+    if (CarreraProgrammingPacket prog = data) {
         // prog := { command, value, address }
-        if (prog[0] == 16 && prog[2] == 7) {
-            digitalWrite(led1, prog[1] >= 1);
-            digitalWrite(led2, prog[1] >= 2);
-            digitalWrite(led3, prog[1] >= 3);
-            digitalWrite(led4, prog[1] >= 4);
-            digitalWrite(led5, prog[1] >= 5);
+        if (prog.command() == 16 && prog.address() == 7) {
+            int value = prog.value();
+            digitalWrite(led1, value >= 1);
+            digitalWrite(led2, value >= 2);
+            digitalWrite(led3, value >= 3);
+            digitalWrite(led4, value >= 4);
+            digitalWrite(led5, value >= 5);
         }
     }
 }

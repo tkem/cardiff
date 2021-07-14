@@ -349,7 +349,7 @@ bool CarreraDigitalControlUnit::parse_pace(int data, uint8_t res[4])
         res[0] = (data >> 5) & 0x1;
         res[1] = (data >> 2) & 0x1;
         res[2] = (data >> 1) & 0x1;
-        res[3] = data & 0x1;
+         res[3] = data & 0x1;
         return true;
     } else {
         return false;
@@ -377,4 +377,30 @@ bool CarreraDigitalControlUnit::parse_ack(int data, uint8_t res[1])
     } else {
         return false;
     }
+}
+
+CarreraControllerPacket::CarreraControllerPacket(int data)
+    : _data((data & ~0x1ff) == 0x200 && (data & ~0x3f) != 0x3c0 ? data : 0)
+{}
+
+CarreraPaceCarPacket::CarreraPaceCarPacket(int data)
+    : _data((data & ~0x3f) == 0x3c0 ? data : 0)
+{}
+
+CarreraActivityPacket::CarreraActivityPacket(int data)
+    : _data((data & ~0x7f) == 0x80 ? data : 0)
+{
+    _data = 0x80 | rev8(_data & 0xff); // LSB
+}
+
+CarreraAcknowledgePacket::CarreraAcknowledgePacket(int data)
+    : _data((data & ~0xff) == 0x100 ? data : 0)
+{
+    _data = 0x100 | rev8(_data & 0xff);  // LSB
+}
+
+CarreraProgrammingPacket::CarreraProgrammingPacket(int data)
+    : _data((data & ~0xfff) == 0x1000 ? data : 0)
+{
+    _data = 0x1000 | rev12(_data);  // LSB
 }

@@ -40,7 +40,7 @@ CarreraDigitalControlUnit cu(cuPin);
 class DataLogger {
 public:
     DataLogger() {}
-    
+
     DataLogger& operator<<(const char* s) {
         fputs(s, stdout);
         return *this;
@@ -85,44 +85,38 @@ void setup() {
 }
 
 void loop() {
-    uint8_t values[4];  // maximum number of components
     int data = cu.read(100000);  // 100ms timeout
     if (data < 0) {
         out << "Timeout\r\n";
         cu.reset();
-    } else if (cu.parse_prog(data, values)) {
-        // prog := { command, value, address }
+    } else if (CarreraProgrammingPacket prog = data) {
         out << uint16_t(data) << " PROG:"
-            << " COMMAND=" << values[0]
-            << " VALUE=" << values[1]
-            << " ADDRESS=" << values[2]
+            << " COMMAND=" << prog.command()
+            << " VALUE=" << prog.value()
+            << " ADDRESS=" << prog.address()
             << "\r\n";
-    } else if (cu.parse_ctrl(data, values)) {
-        // ctrl := { address, speed, button, fuel }
+    } else if (CarreraControllerPacket ctrl = data) {
         out << uint16_t(data) << " CTRL:"
-            << " ADDRESS=" << values[0]
-            << " SPEED=" << values[1]
-            << " BUTTON=" << values[2]
-            << " FUEL=" << values[3]
+            << " ADDRESS=" << ctrl.address()
+            << " THROTTLE=" << ctrl.throttle()
+            << " LANECHANGE=" << ctrl.laneChange()
+            << " FUEL=" << ctrl.fuelMode()
             << "\r\n";
-    } else if (cu.parse_pace(data, values)) {
-        // pace := { stop, return, active, fuel }
+    } else if (CarreraPaceCarPacket pace = data) {
         out << uint16_t(data) << " PACE:"
-            << " STOP=" << values[0]
-            << " RETURN=" << values[1]
-            << " ACTIVE=" << values[2]
-            << " FUEL=" << values[3]
+            << " STOPPED=" << pace.stopped()
+            << " RETURN=" << pace.returnToPit()
+            << " ACTIVE=" << pace.active()
+            << " FUEL=" << pace.fuelMode()
             << "\r\n";
-    } else if (cu.parse_act(data, values)) {
-        // act := { mask, any }
+    } else if (CarreraActivityPacket act = data) {
         out << uint16_t(data) << " ACT:"
-            << " MASK=" << values[0]
-            << " ANY=" << values[1]
+            << " MASK=" << act.controllerMask()
+            << " ANY=" << act.anyControllerActive()
             << "\r\n";
-    } else if (cu.parse_ack(data, values)) {
-        // ack := { mask }
+    } else if (CarreraAcknowledgePacket ack = data) {
         out << uint16_t(data) << " ACK:"
-            << " MASK=" << values[0]
+            << " MASK=" << ack.slotMask()
             << "\r\n";
     } else {
         out << uint16_t(data) << " [???]\r\n";

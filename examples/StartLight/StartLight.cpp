@@ -34,16 +34,15 @@ int main() {
     cu.start();
 
     while (true) {
-        uint8_t prog[3];
         int data = cu.read();
-        if (cu.parse_prog(data, prog)) {
-            // prog := { command, value, address }
-            if (prog[0] == 16 && prog[2] == 7) {
-                led1 = prog[1] >= 1;
-                led2 = prog[1] >= 2;
-                led3 = prog[1] >= 3;
-                led4 = prog[1] >= 4;
-                led5 = prog[1] >= 5;
+        if (CarreraProgrammingPacket prog = data) {
+            if (prog.command() == 16 && prog.address() == 7) {
+                int value = prog.value();
+                led1 = value >= 1;
+                led2 = value >= 2;
+                led3 = value >= 3;
+                led4 = value >= 4;
+                led5 = value >= 5;
             }
         }
     }
