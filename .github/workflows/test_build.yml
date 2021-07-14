@@ -1,21 +1,9 @@
-# This is a basic workflow to help you get started with Actions
+name: Test Build
 
-name: Test Builds
+on: [push, pull_request, workflow_dispatch]
 
-# Controls when the action will run. 
-on:
-  # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    branches: [ master ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -27,21 +15,15 @@ jobs:
             boards: -b nucleo_f446re
           - framework: arduino
             boards: -b uno -b pico -b nodemcuv2
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name: Install pio and its dependencies
+      - name: Install platformio and its dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install platformio  
+          pip install platformio
           pio update
-      # Compile Test-Projects
       - name: Compile ${{ matrix.framework }}
         run: |
-          pio ci -v -l src -O framework=${{ matrix.framework }} ${{ matrix.boards }} 
+          pio ci -v -l src -O framework=${{ matrix.framework }} ${{ matrix.boards }}
         env:
           PLATFORMIO_CI_SRC: ${{ matrix.src }}
-       
